@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import HubSelector from '@/components/Hue/HubSelector.vue';
+import HubSelector from "@/components/Hue/HubSelector.vue";
 
 export default {
-  components:{
+  components: {
     HubSelector,
   },
 
@@ -24,11 +24,19 @@ export default {
   },
 
   methods: {
-    async loadSettings() {
+    loadSettings() {
       //Store current system user as data
-      this.systemUser = await window.ipc.invoke("get-system-username");
+      window.ipc.invoke("get-system-username").then((user) => {
+        this.systemUser = user;
+      });
       //Load hub settings
-      this.settings.hubs = await window.ipc.invoke("read-config", "hubs");
+      window.ipc.invoke("read-config", "hubs").then((settings) => {
+        if (settings != undefined) {
+          this.settings.hubs = settings;
+        }else{
+          this.settings.hubs = {};
+        }
+      });
     },
   },
 };

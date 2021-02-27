@@ -1,28 +1,33 @@
 <template>
   <div class="flex flex-col justify-center text-center bg-gray-300 m-4 rounded">
-    <h1 class="text-xl">Detected hubs:</h1>
-    <!-- Known hubs (i.e hubs with an API token in config files) -->
-    <div v-if="knownHubs.length" class="bg-white m-4 rounded">
-      <h1 class="text-xl">Known hubs:</h1>
-      <article
-        class="bg-green-200 underline cursor-pointer m-2 rounded"
-        v-for="hub in knownHubs"
-        :key="hub.id"
-      >
-        <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
-      </article>
+    <div v-if="knownHubs.length || unknownHubs.length">
+      <h1 class="text-xl">Detected hubs:</h1>
+      <!-- Known hubs (i.e hubs with an API token in config files) -->
+      <div v-if="knownHubs.length" class="bg-white m-4 rounded">
+        <h1 class="text-xl">Known hubs:</h1>
+        <article
+          class="bg-green-200 underline cursor-pointer m-2 rounded"
+          v-for="hub in knownHubs"
+          :key="hub.id"
+        >
+          <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
+        </article>
+      </div>
+      <!-- Unknown hubs (i.e without token) -->
+      <div v-if="unknownHubs.length" class="bg-white m-4 rounded">
+        <h1 class="text-xl">Unknown hubs:</h1>
+        <article
+          @click="hubSetup(hub.id, hub.internalipaddress)"
+          class="bg-white underline cursor-pointer m-2 rounded"
+          v-for="hub in unknownHubs"
+          :key="hub.id"
+        >
+          <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
+        </article>
+      </div>
     </div>
-    <!-- Unknown hubs (i.e without token) -->
-    <div v-if="unknownHubs.length" class="bg-white m-4 rounded">
-      <h1 class="text-xl">Unknown hubs:</h1>
-      <article
-        @click="hubSetup(hub.id, hub.internalipaddress)"
-        class="bg-white underline cursor-pointer m-2 rounded"
-        v-for="hub in unknownHubs"
-        :key="hub.id"
-      >
-        <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
-      </article>
+    <div v-else>
+      <h1 class="text-xl">No hubs detected on your network.</h1>
     </div>
     <button
       @click="hubSearch()"
@@ -60,17 +65,19 @@ export default {
         .get("https://discovery.meethue.com/")
         .then((response) => {
           // handle success
-          response.data.forEach((element) => {
-            if (this.settings.hubs[element.id]) {
-              this.knownHubs.push(element);
-            } else {
-              this.unknownHubs.push(element);
-            }
+          this.knownHubs = response.data.filter((hub) => {
+            return hub.id in this.settings.hubs;
+          });
+          this.unknownHubs = response.data.filter((hub) => {
+            return !(hub.id in this.settings.hubs);
           });
         })
-        .catch(function (error) {
+        .catch((error) => {
           // handle error
+          //Clear array, in case of error this will represent the api call result (empty)
           console.log(error);
+          this.knownHubs = [];
+          this.unknownHubs = [];
         });
     },
 
@@ -81,7 +88,11 @@ export default {
       axios.post(`http://${hubIp}/api`, requestDeviceType).then((response) => {
         // Request contains error until the button of hub is pressed
         if (response.data[0]["error"]) {
-          alert("Please press your hub button and retry.");
+          window.ipc.invoke("messagebox", {
+            type: "info",
+            title: "Setup your Hub",
+            message: "Please go press the hub button and retry.",
+          });
           // Success: Button was pressed
         } else if (response.data[0]["success"]) {
           window.ipc.invoke("save-config", `hubs.${hubId}`, {
@@ -89,7 +100,9 @@ export default {
             requestDeviceType,
           });
         } else {
-          alert("Unhandled response.");
+          window.ipc.invoke("errorbox", {
+            content: "Error: unhandled hub api response.",
+          });
         }
       });
     },

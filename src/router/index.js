@@ -18,7 +18,7 @@ const routes = [
     component: HueHub,
     /**
      * Bellow is to pass routes parameters as props for the HubHub view
-     * Parameters passed should be : [id, ip, username] 
+     * Parameter passed should be : hub { id: 'id', ip: 'ip', username: 'username'}
      */
     props: true
   },

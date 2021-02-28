@@ -1,17 +1,19 @@
 <template>
   <div>
-      {{this.id}}
-      {{this.ip}}
-      {{this.username}}
+    <HubController :id="hub.id" :ip="hub.ip" :username="hub.username" />
   </div>
 </template>
 
 <script>
+import HubController from "@/components/Hue/HubController.vue";
+
 export default {
+  components: {
+    HubController,
+  },
+
   props: {
-    id: String,
-    ip: String,
-    username: String,
+    hub: Object,
   },
 };
 </script>

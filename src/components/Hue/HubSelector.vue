@@ -15,7 +15,13 @@
             @click="
               $router.push({
                 name: 'HueHub',
-                params: { id: hub.id, ip: hub.internalipaddress, username: 'test'},
+                params: {
+                  hub: {
+                    id: hub.id,
+                    ip: hub.internalipaddress,
+                    username: settings.hubs[hub.id].username,
+                  },
+                },
               })
             "
             class="bg-green-500 hover:bg-green-700 text-white rounded px-1 mx-2"

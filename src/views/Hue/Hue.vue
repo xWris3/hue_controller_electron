@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HubSelector :settings="this.settings" :systemUser="this.systemUser" />
+    <HubSelector :settings="settings" :systemUser="systemUser" />
   </div>
 </template>
 

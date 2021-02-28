@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-stretch">
-    <section class="flex flex-wrap w-4/6">
+    <section class="flex flex-wrap w-full">
       <div
         v-for="(light, lightId) in lights"
         :key="light.uniqueid"

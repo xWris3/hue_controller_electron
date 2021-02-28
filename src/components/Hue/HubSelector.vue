@@ -3,26 +3,36 @@
     <div v-if="knownHubs.length || unknownHubs.length">
       <h1 class="text-xl">Detected hubs:</h1>
       <!-- Known hubs (i.e hubs with an API token in config files) -->
-      <div v-if="knownHubs.length" class="bg-white m-4 rounded">
+      <div v-if="knownHubs.length" class="bg-white m-4 p-4 rounded">
         <h1 class="text-xl">Known hubs:</h1>
         <article
-          class="bg-green-200 underline cursor-pointer m-2 rounded"
+          class="bg-green-200 m-2 p-2 rounded"
           v-for="hub in knownHubs"
           :key="hub.id"
         >
           <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
+          <button
+            class="bg-green-500 hover:bg-green-700 text-white rounded px-1 mx-2"
+          >
+            Control
+          </button>
         </article>
       </div>
       <!-- Unknown hubs (i.e without token) -->
-      <div v-if="unknownHubs.length" class="bg-white m-4 rounded">
+      <div v-if="unknownHubs.length" class="bg-white m-4 p-4 rounded">
         <h1 class="text-xl">Unknown hubs:</h1>
         <article
-          @click="hubSetup(hub.id, hub.internalipaddress)"
-          class="bg-white underline cursor-pointer m-2 rounded"
+          class="bg-gray-200 m-2 p-2 rounded"
           v-for="hub in unknownHubs"
           :key="hub.id"
         >
           <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
+          <button
+            @click="hubSetup(hub.id, hub.internalipaddress)"
+            class="bg-gray-500 hover:bg-gray-700 text-white rounded px-1 mx-2"
+          >
+            Configure
+          </button>
         </article>
       </div>
     </div>

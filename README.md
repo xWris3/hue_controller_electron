@@ -1,4 +1,4 @@
-# caca-electron
+# hue-controller
 
 ## Project setup
 ```

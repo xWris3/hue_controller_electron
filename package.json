@@ -1,5 +1,5 @@
 {
-  "name": "caca-electron",
+  "name": "hue-controller",
   "version": "0.1.0",
   "private": true,
   "scripts": {

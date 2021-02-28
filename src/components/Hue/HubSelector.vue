@@ -12,6 +12,12 @@
         >
           <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
           <button
+            @click="
+              $router.push({
+                name: 'HueHub',
+                params: { id: hub.id, ip: hub.internalipaddress, username: 'test'},
+              })
+            "
             class="bg-green-500 hover:bg-green-700 text-white rounded px-1 mx-2"
           >
             Control

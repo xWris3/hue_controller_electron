@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 //import Home from '../views/Home.vue'
-import Hue from '../views/Hue.vue'
+import Hue from '../views/Hue/Hue.vue'
+import HueHub from '../views/Hue/HueHub.vue'
 
 Vue.use(VueRouter)
 
@@ -10,6 +11,16 @@ const routes = [
     path: '/',
     name: 'Hue',
     component: Hue
+  },
+  {
+    path: '/hub/',
+    name: 'HueHub',
+    component: HueHub,
+    /**
+     * Bellow is to pass routes parameters as props for the HubHub view
+     * Parameters passed should be : [id, ip, username] 
+     */
+    props: true
   },
   {
     path: '/about',

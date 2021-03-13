@@ -68,14 +68,29 @@ export default {
           console.log(error);
         });
     },
-    setState() {
+    setState(state) {
       axios
-        .put(`${this.baseApiUri}/${this.apiId}/state`, this.light.state) //will probably fail, need to put only specific state properties
+        .put(`${this.baseApiUri}/${this.apiId}/state`, state)
         .then((response) => {
           // handle success
-          //TODO : Gérer le retour de l'api pour les refus de modifications, et garder un state local représentatif de l'état renvoyé
-          //this.light.state = response.data;
-          console.log(response.data);
+
+          // Read api feedback to verify if modifications were successful
+          let success = function () {
+            response.data.forEach((feedback) => {
+              if ("error" in feedback) {
+                return false;
+              }
+            });
+            return true;
+          };
+
+          if (success) {
+            //Change was accepted by the API
+            this.light.state = state;
+          } else {
+            //Change was rejected by the API
+            // TODO: Inform end-user
+          }
         })
         .catch((error) => {
           // handle error
@@ -83,8 +98,7 @@ export default {
         });
     },
     toggleLight() {
-      this.light.state.on = !this.light.state.on; //inverse state
-      this.setState(); // send state to api
+      this.setState({ on: !this.light.state.on }); // send state to api
     },
   },
 };

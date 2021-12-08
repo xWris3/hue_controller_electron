@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name":"Erwan Basile"
+    "name": "Erwan Basile"
   },
   "repository": {
     "url": "https://github.com/xWris3/hue_controller_electron"

@@ -1,12 +1,20 @@
 {
   "name": "hue-controller",
+  "description": "A small Phillips Hue Controller",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name":"Erwan Basile"
+  },
+  "repository": {
+    "url": "https://github.com/xWris3/hue_controller_electron"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
+    "electron:build publish": "vue-cli-service electron:build -p always",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
@@ -18,6 +26,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "electron-store": "^7.0.2",
+    "electron-updater": "^4.6.1",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vue": "^2.6.11",

@@ -7,6 +7,8 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 import { registerEvents } from './events'
+// AutoUpdate
+import { autoUpdater } from "electron-updater"
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -67,8 +69,8 @@ app.on('ready', async () => {
     }
   }
   registerEvents()
-
   createWindow()
+  autoUpdater.checkForUpdatesAndNotify()
 })
 
 // Exit cleanly on request from parent process in development mode.

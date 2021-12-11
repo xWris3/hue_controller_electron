@@ -37,6 +37,10 @@ export const registerEvents = () => {
     ipcMain.handle('get-system-username', (event) => {
         return os.userInfo().username;
     });
+
+    ipcMain.handle('get-system-hostname', (event) => {
+        return os.hostname()
+    });
 }
 
 export default registerEvents

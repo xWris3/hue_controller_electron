@@ -81,6 +81,9 @@ export default {
     this.hubSearch();
   },
 
+  // TODO: rewrite the methods bellow to use the app name + both the machine name and the username as api app identifier
+  // TODO: use Vuex nd the methods from the preload because ipc is not exposed anymore.
+
   methods: {
     hubSearch() {
       axios

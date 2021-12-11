@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import App from '../App.vue'
 import '../assets/tailwind.css'
 import router from '../router'
-import storeInit from './store'
+import storeInit, { commitCurrentConfigStore, commitCurrentSystemVars } from './store'
 
 Vue.config.productionTip = false
 Vue.use(Vuex)
@@ -18,21 +18,9 @@ const vue = new Vue({
   store,
   render: h => h(App)
 })
+
+// Setup values for Vuex store from current system value (Node) and local config file (electron-store) 
+commitCurrentSystemVars(vue)
+commitCurrentConfigStore(vue)
+
 vue.$mount('#app')
-
-console.log(vue)
-window.system.getUserInfo().then(systemUsername => {
-  console.log(systemUsername)
-  vue.$store.commit('systemUserInfo', {
-    systemUsername: systemUsername,
-    systemHostname: 'XD'
-  })
-})
-
-// window.ipc.invoke('get-system-username').then(systemUsername => {
-//   console.log(systemUsername)
-//   vue.$store.commit('systemUserInfo', {
-//     systemUsername: systemUsername,
-//     systemHostname: 'XD'
-//   })
-// })

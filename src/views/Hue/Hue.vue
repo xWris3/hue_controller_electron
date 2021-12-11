@@ -12,31 +12,12 @@ export default {
     HubSelector,
   },
 
-  data() {
-    return {
-      systemUser: undefined,  // TODO: System user should be in the app (Vuex) state
-      settings: {},
-    };
-  },
-
-  created: function () {
-    this.loadSettings();
-  },
-
-  methods: {
-    loadSettings() {
-      //Store current system user as data
-      window.ipc.invoke("get-system-username").then((user) => {
-        this.systemUser = user;
-      });
-      //Load hub settings
-      window.ipc.invoke("read-config", "hubs").then((settings) => {
-        if (settings != undefined) {
-          this.settings.hubs = settings;
-        }else{
-          this.settings.hubs = {};
-        }
-      });
+  computed: {
+    systemUser() {
+      return this.$store.state.systemUsername;
+    },
+    settings() {
+      return this.$store.state.config;
     },
   },
 };

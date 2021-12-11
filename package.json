@@ -27,11 +27,13 @@
     "core-js": "^3.6.5",
     "electron-store": "^7.0.2",
     "electron-updater": "^4.6.1",
+    "es6-promise": "^4.2.8",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vue": "^2.6.11",
     "vue-round-slider": "^1.0.1",
-    "vue-router": "^3.2.0"
+    "vue-router": "^3.2.0",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -1,6 +1,8 @@
 import { ipcMain, dialog } from 'electron'
 import { saveConfig, readConfig } from './config'
 
+const os = require('os')
+
 export const registerEvents = () => {
     /**
      * Configuration events
@@ -33,7 +35,7 @@ export const registerEvents = () => {
      * System value events
      */
     ipcMain.handle('get-system-username', (event) => {
-        return require('os').userInfo().username;
+        return os.userInfo().username;
     });
 }
 

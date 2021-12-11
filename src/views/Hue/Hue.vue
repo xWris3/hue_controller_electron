@@ -14,7 +14,7 @@ export default {
 
   data() {
     return {
-      systemUser: undefined,
+      systemUser: undefined,  // TODO: System user should be in the app (Vuex) state
       settings: {},
     };
   },

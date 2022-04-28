@@ -14,28 +14,31 @@ export const mutations = {
     },
     configStore(state, payload) {
         state.config.hubs = payload.config
+        // TODO: change the local config store if the vuex store changes.
     }
     // Add any mutation here (read the doc)
 }
 
 export default { state, mutations }
 
-export const commitCurrentSystemVars = (vue) => {
+/*
+ * Init local Vuex config store from various sources 
+ */
+export const initFromCurrentSystemVars = (store) => {
     // Get values using preload functions making use of registered events.
     const sysValuePromises = [window.system.getSystemUsername(), window.system.getSystemHostname()]
     Promise.all(sysValuePromises).then((values) => {
-        vue.$store.commit('systemInfo', {
+        store.commit('systemInfo', {
             systemUsername: values[0],
             systemHostname: values[1]
         })
     })
 }
-
-export const commitCurrentConfigStore = (vue) => {
+export const initFromConfigStore = (store) => {
     // Get values from the config store
     const hubs = window.system.config.readConfig('hubs')
     hubs.then((value) => {
-        vue.$store.commit('configStore', {
+        store.commit('configStore', {
             config: value,
         })
     })

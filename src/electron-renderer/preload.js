@@ -20,8 +20,8 @@ contextBridge.exposeInMainWorld('system', {
         readConfig(key) {
             return ipcRenderer.invoke('read-config', key)
         },
-        writeConfig(key) {
-            return ipcRenderer.invoke('save-config', key)
+        writeConfig(key, value) {
+            return ipcRenderer.invoke('save-config', key, value)
         }
     }
 })

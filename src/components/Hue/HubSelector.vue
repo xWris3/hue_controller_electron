@@ -113,7 +113,9 @@ export default {
       axios.post(`http://${hubIp}/api`, requestDeviceType).then((response) => {
         // Request contains error until the button of hub is pressed
         if (response.data[0]["error"]) {
-          window.ipc.invoke("messagebox", {
+          // TODO do the same bellow but use Vuex to save the config in the Vuex store.
+          // Add a logic to save the Vuex $store.config dans le configstore local (.json) à la fermeture du programme (voir background.js)
+          window.system.sendSystemMessageBox({
             type: "info",
             title: "Setup your Hub",
             message: "Please go press the hub button and retry.",

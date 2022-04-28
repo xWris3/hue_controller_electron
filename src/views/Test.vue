@@ -13,12 +13,10 @@
 export default {
   methods: {
     saveConfig() {
-      window.ipc.invoke("save-config", this.key, this.value);
+      window.system.config.writeConfig(this.key, this.value);
     },
     readConfig() {
-      //const keyFromMain = await 
-      window.ipc.invoke("read-config", this.key).then(e => console.log(e));
-      //console.log(keyFromMain);
+      window.system.config.readConfig(this.key).then(e => console.log(e));
     },
   },
   data: function () {

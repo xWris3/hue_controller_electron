@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col justify-center text-center bg-gray-300 m-4 rounded">
+    <span>{{ apiAppId }}</span>
     <div v-if="knownHubs.length || unknownHubs.length">
       <h1 class="text-xl">Detected hubs:</h1>
       <!-- Known hubs (i.e hubs with an API token in config files) -->
@@ -19,7 +20,7 @@
                   hub: {
                     id: hub.id,
                     ip: hub.internalipaddress,
-                    username: settings.hubs[hub.id].username,
+                    username: this.$store.state.config.hubs[hub.id].username,
                   },
                 },
               })
@@ -65,10 +66,6 @@ import axios from "axios";
 
 export default {
   name: "HubSelector",
-  props: {
-    settings: Object,
-    systemUser: String,
-  },
 
   data() {
     return {
@@ -81,8 +78,11 @@ export default {
     this.hubSearch();
   },
 
-  // TODO: rewrite the methods bellow to use the app name + both the machine name and the username as api app identifier
-  // TODO: use Vuex nd the methods from the preload because ipc is not exposed anymore.
+  computed: {
+    apiAppId() {
+      return this.$store.getters.apiAppId
+    }
+  },
 
   methods: {
     hubSearch() {
@@ -91,10 +91,10 @@ export default {
         .then((response) => {
           // handle success
           this.knownHubs = response.data.filter((hub) => {
-            return hub.id in this.settings.hubs;
+            return hub.id in this.$store.state.config.hubs;
           });
           this.unknownHubs = response.data.filter((hub) => {
-            return !(hub.id in this.settings.hubs);
+            return !(hub.id in this.$store.state.config.hubs);
           });
         })
         .catch((error) => {
@@ -108,7 +108,7 @@ export default {
 
     hubSetup(hubId, hubIp) {
       const requestDeviceType = {
-        devicetype: `electron_hue_app#${this.systemUser}`,
+        devicetype: this.apiAppId,
       };
       axios.post(`http://${hubIp}/api`, requestDeviceType).then((response) => {
         // Request contains error until the button of hub is pressed
@@ -122,12 +122,12 @@ export default {
           });
           // Success: Button was pressed
         } else if (response.data[0]["success"]) {
-          window.ipc.invoke("save-config", `hubs.${hubId}`, {
+          window.system.config.writeConfig(`hubs.${hubId}`, {
             username: response.data[0]["success"]["username"],
             requestDeviceType,
           });
         } else {
-          window.ipc.invoke("errorbox", {
+          window.system.sendSystemErrorBox({
             content: "Error: unhandled hub api response.",
           });
         }

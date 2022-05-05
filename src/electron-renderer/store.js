@@ -19,7 +19,13 @@ export const mutations = {
     // Add any mutation here (read the doc)
 }
 
-export default { state, mutations }
+export const getters = {
+    apiAppId: state => {
+        return 'electron_hue_app#' + state.systemUsername + '@' + state.systemHostname
+    }
+}
+
+export default { state, mutations, getters }
 
 /*
  * Init local Vuex config store from various sources 

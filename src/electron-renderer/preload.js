@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld('system', {
     sendSystemMessageBox(options) {
         return ipcRenderer.invoke('messagebox', options)
     },
+    sendSystemErrorBox(options) {
+        return ipcRenderer.invoke('errorbox', options)
+    },
     'config': {
         readConfig(key) {
             return ipcRenderer.invoke('read-config', key)

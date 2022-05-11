@@ -44,8 +44,14 @@ export const initFromConfigStore = (store) => {
     // Get values from the config store
     const hubs = window.system.config.readConfig('hubs')
     hubs.then((value) => {
-        store.commit('configStore', {
-            config: value,
-        })
+        if(value != undefined){
+            store.commit('configStore', {
+                config: value,
+            })
+        }else{
+            store.commit('configStore', {
+                config: {},
+            })
+        }
     })
 }

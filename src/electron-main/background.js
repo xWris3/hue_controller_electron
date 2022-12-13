@@ -9,6 +9,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 import { registerEvents } from './events'
 // AutoUpdate
 import { autoUpdater } from "electron-updater"
+// Logging
+const log = require('electron-log')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -68,8 +70,11 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+  log.debug('Event & Window creation')
   registerEvents()
   createWindow()
+  log.debug('Checking for updates ...')
+  autoUpdater.logger = log
   autoUpdater.checkForUpdatesAndNotify()
 })
 

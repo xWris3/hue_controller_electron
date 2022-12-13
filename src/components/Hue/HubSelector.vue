@@ -20,7 +20,7 @@
                   hub: {
                     id: hub.id,
                     ip: hub.internalipaddress,
-                    username: this.$store.state.config.hubs[hub.id].username,
+                    username: $store.state.config.hubs[hub.id].username,
                   },
                 },
               })
@@ -86,6 +86,7 @@ export default {
 
   methods: {
     hubSearch() {
+      // TODO: move to mdns discovery instead of the discovery endpoint
       axios
         .get("https://discovery.meethue.com/")
         .then((response) => {

@@ -29,6 +29,7 @@
     "electron-store": "^7.0.2",
     "electron-updater": "^4.6.1",
     "es6-promise": "^4.2.8",
+    "mdns-discovery": "^0.2.6",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vue": "^2.6.11",

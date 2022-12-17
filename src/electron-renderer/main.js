@@ -5,6 +5,10 @@ import App from '../App.vue'
 import '../assets/tailwind.css'
 import router from '../router'
 import storeInit, { initFromConfigStore, initFromCurrentSystemVars } from './store'
+import Modal from "../components/Modal.vue"
+
+// Global component registration
+Vue.component('Modal', Modal)
 
 Vue.config.productionTip = false
 Vue.use(Vuex)

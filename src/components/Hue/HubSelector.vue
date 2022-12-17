@@ -9,17 +9,17 @@
         <article
           class="bg-green-200 m-2 p-2 rounded"
           v-for="hub in knownHubs"
-          :key="hub.id"
+          :key="hub.bridgeid"
         >
-          <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
+          <span>{{ hub.name }} (id: {{ hub.bridgeid }})</span>
           <button
             @click="
               $router.push({
                 name: 'HueHub',
                 params: {
                   hub: {
-                    id: hub.id,
-                    ip: hub.internalipaddress,
+                    id: hub.bridgeid,
+                    ip: hub.ip,
                     username: $store.state.config.hubs[hub.id].username,
                   },
                 },
@@ -37,11 +37,11 @@
         <article
           class="bg-gray-200 m-2 p-2 rounded"
           v-for="hub in unknownHubs"
-          :key="hub.id"
+          :key="hub.bridgeid"
         >
-          <span>IP: {{ hub.internalipaddress }} (id: {{ hub.id }})</span>
+          <span>{{ hub.name }} (id: {{ hub.bridgeid }})</span>
           <button
-            @click="hubSetup(hub.id, hub.internalipaddress)"
+            @click="hubSetup(hub.bridgeid, hub.ip)"
             class="bg-gray-500 hover:bg-gray-700 text-white rounded px-1 mx-2"
           >
             Configure
@@ -54,7 +54,16 @@
     </div>
     <button
       @click="hubSearch()"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-b p-x-10"
+      class="
+        bg-blue-500
+        hover:bg-blue-700
+        text-white
+        font-bold
+        py-2
+        px-4
+        rounded-b
+        p-x-10
+      "
     >
       Rescan !
     </button>
@@ -74,36 +83,56 @@ export default {
     };
   },
 
-  created: function () {
+  created() {
     this.hubSearch();
   },
 
   computed: {
     apiAppId() {
-      return this.$store.getters.apiAppId
-    }
+      return this.$store.getters.apiAppId;
+    },
   },
 
   methods: {
-    hubSearch() {
-      // TODO: move to mdns discovery instead of the discovery endpoint
-      axios
-        .get("https://discovery.meethue.com/")
+    hubFirstContact(hubIp) {
+      return axios
+        .get(`http://${hubIp}/api/0/config`)
         .then((response) => {
+          // Simple request to get hub information
+          window.system.log.info(`[hubFirstContact()] Promise resolved: ${JSON.stringify(response.data)}`)
+          return response.data;
+        })
+        .catch((error) => {
+          window.system.log.debug(`[hubFirstContact()] Promise rejected: ${JSON.stringify(error)}`)
+          return error;
+        });
+    },
+
+    hubSearch() {
+      //Clear data
+      this.knownHubs = [];
+      this.unknownHubs = [];
+      // MDns hub discovery
+      window.system.mdns
+        .mdnsLookup()
+        .then((hubs) => {
           // handle success
-          this.knownHubs = response.data.filter((hub) => {
-            return hub.id in this.$store.state.config.hubs;
-          });
-          this.unknownHubs = response.data.filter((hub) => {
-            return !(hub.id in this.$store.state.config.hubs);
+          window.system.log.info(`[hubSearch()] Mdns lookup Promise resolved: ${JSON.stringify(hubs)}`)
+
+          hubs.forEach((h) => {
+            this.hubFirstContact(h.ip).then((hInfo) => {
+              let new_hub = {...hInfo, ip: h.ip}
+              if (new_hub.bridgeid in this.$store.state.config.hubs){
+                this.knownHubs.push(new_hub)
+              }else{
+                this.unknownHubs.push(new_hub)
+              }
+            })
           });
         })
         .catch((error) => {
-          // handle error
-          //Clear array, in case of error this will represent the api call result (empty)
-          console.log(error);
-          this.knownHubs = [];
-          this.unknownHubs = [];
+          // log error
+          window.system.log.info(`[hubSearch()] Mdns lookup Promise rejected: ${JSON.stringify(error)}`)
         });
     },
 

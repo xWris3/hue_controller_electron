@@ -174,7 +174,7 @@ export default {
           hubs.forEach((h) => {
             this.hubFirstContact(h.ip).then((hInfo) => {
               let new_hub = { ...hInfo, ip: h.ip };
-              if (new_hub.bridgeid in this.$store.state.config.hubs) {
+              if (new_hub.bridgeid in this.$store.state.knownHubs) {
                 this.knownHubs.push(new_hub);
               } else {
                 this.unknownHubs.push(new_hub);

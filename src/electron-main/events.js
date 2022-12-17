@@ -1,5 +1,6 @@
 import { ipcMain, dialog } from 'electron'
 import { saveConfig, readConfig } from './config'
+import { bridgesLookup } from './mdns/mdns_ops'
 
 const os = require('os')
 
@@ -41,6 +42,13 @@ export const registerEvents = () => {
     ipcMain.handle('get-system-hostname', (event) => {
         return os.hostname()
     });
+
+    /**
+     * MDns events
+     */
+    ipcMain.handle('mdns-lookup', (event) => {
+        return bridgesLookup()
+    } )
 }
 
 export default registerEvents

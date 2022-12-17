@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('system', {
         return ipcRenderer.invoke('errorbox', options)
     },
     // Config related, saves data in the json config-store
-    'config': {
+    config: {
         readConfig(key) {
             return ipcRenderer.invoke('read-config', key)
         },
@@ -31,5 +31,11 @@ contextBridge.exposeInMainWorld('system', {
             return ipcRenderer.invoke('save-config', key, value)
         }
     },
-    'log': log.functions
+    // MDns related, invoke event on the main thread, to make Multicast-Dns requests
+    mdns: {
+        mdnsLookup() {
+            return ipcRenderer.invoke('mdns-lookup')
+        }
+    },
+    log: log.functions
 })

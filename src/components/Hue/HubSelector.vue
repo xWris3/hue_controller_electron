@@ -1,5 +1,46 @@
 <template>
   <div class="flex flex-col justify-center text-center bg-gray-300 m-4 rounded">
+    <!-- hubSetupModal -->
+    <Modal v-if="hubSetupModal">
+      <template v-slot:header>Hub pairing</template>
+      <template v-slot:body>
+        <div>
+          <svg class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+        <div>Please press the button on your hub</div>
+      </template>
+      <template v-slot:footer>
+        <button
+          class="
+            bg-blue-500
+            hover:bg-blue-700
+            text-white
+            p-2
+            font-semibold
+            rounded
+          "
+          @click="hubSetupModal = false"
+        >
+          Close (stop pairing process)
+        </button>
+      </template>
+    </Modal>
+    <!-- /hubSetupModal -->
+
     <span>{{ apiAppId }}</span>
     <div v-if="knownHubs.length || unknownHubs.length">
       <h1 class="text-xl">Detected hubs:</h1>
@@ -80,6 +121,7 @@ export default {
     return {
       unknownHubs: [],
       knownHubs: [],
+      hubSetupModal: false,
     };
   },
 
@@ -99,11 +141,17 @@ export default {
         .get(`http://${hubIp}/api/0/config`)
         .then((response) => {
           // Simple request to get hub information
-          window.system.log.info(`[hubFirstContact()] Promise resolved: ${JSON.stringify(response.data)}`)
+          window.system.log.info(
+            `[hubFirstContact()] Promise resolved: ${JSON.stringify(
+              response.data
+            )}`
+          );
           return response.data;
         })
         .catch((error) => {
-          window.system.log.debug(`[hubFirstContact()] Promise rejected: ${JSON.stringify(error)}`)
+          window.system.log.debug(
+            `[hubFirstContact()] Promise rejected: ${JSON.stringify(error)}`
+          );
           return error;
         });
     },
@@ -117,22 +165,30 @@ export default {
         .mdnsLookup()
         .then((hubs) => {
           // handle success
-          window.system.log.info(`[hubSearch()] Mdns lookup Promise resolved: ${JSON.stringify(hubs)}`)
+          window.system.log.info(
+            `[hubSearch()] Mdns lookup Promise resolved: ${JSON.stringify(
+              hubs
+            )}`
+          );
 
           hubs.forEach((h) => {
             this.hubFirstContact(h.ip).then((hInfo) => {
-              let new_hub = {...hInfo, ip: h.ip}
-              if (new_hub.bridgeid in this.$store.state.config.hubs){
-                this.knownHubs.push(new_hub)
-              }else{
-                this.unknownHubs.push(new_hub)
+              let new_hub = { ...hInfo, ip: h.ip };
+              if (new_hub.bridgeid in this.$store.state.config.hubs) {
+                this.knownHubs.push(new_hub);
+              } else {
+                this.unknownHubs.push(new_hub);
               }
-            })
+            });
           });
         })
         .catch((error) => {
           // log error
-          window.system.log.info(`[hubSearch()] Mdns lookup Promise rejected: ${JSON.stringify(error)}`)
+          window.system.log.info(
+            `[hubSearch()] Mdns lookup Promise rejected: ${JSON.stringify(
+              error
+            )}`
+          );
         });
     },
 
@@ -140,6 +196,7 @@ export default {
       const requestDeviceType = {
         devicetype: this.apiAppId,
       };
+
       axios.post(`http://${hubIp}/api`, requestDeviceType).then((response) => {
         // Request contains error until the button of hub is pressed
         if (response.data[0]["error"]) {

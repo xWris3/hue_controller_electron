@@ -1,20 +1,28 @@
 export const state = {
     systemUsername: 'defaultSystemUsername',
     systemHostname: 'defaultSystemHostname',
-    config: {
+    knownHubs: [],
+    preferences: {},
+    continuity: {},
+};
 
-    },
-    // Add any other general app state here, with default value
-}
+// Add any other general app state here, with default value
 
 export const mutations = {
     systemInfo(state, payload) {
         state.systemUsername = payload.systemUsername
         state.systemHostname = payload.systemHostname
     },
-    configStore(state, payload) {
-        state.config.hubs = payload.config
+    knownHubs(state, payload) {
+        state.knownHubs = payload
         // TODO: change the local config store if the vuex store changes.
+        // >> in reality, it would be better to catch the electron event "before-quit", come back up to Vuex, and save the Vuex state in json file.
+    },
+    preferences(state, payload) {
+        state.preferences = payload // mutation to save the preferences, settings ...
+    },
+    continuity(state, payload) {
+        state.continuity = payload // mutation to save the app state (which page was active and such) - "continuity" sounds cool
     }
     // Add any mutation here (read the doc)
 }
@@ -42,16 +50,15 @@ export const initFromCurrentSystemVars = (store) => {
 }
 export const initFromConfigStore = (store) => {
     // Get values from the config store
-    const hubs = window.system.config.readConfig('hubs')
-    hubs.then((value) => {
-        if(value != undefined){
-            store.commit('configStore', {
-                config: value,
-            })
-        }else{
-            store.commit('configStore', {
-                config: {},
-            })
+    const knownHubs = window.system.config.readConfig('knownHubs')
+    knownHubs.then((kH) => {
+        if (kH != undefined) {
+            store.commit('knownHubs', kH)
         }
     })
+    // TODO add reading of the other pieces of settings / continuity to complete the Vuex store
+}
+
+export const saveToConfigStore = () => {
+    // TODO - save every bit of config to disk - knownHubs, preferences, continuity ...
 }

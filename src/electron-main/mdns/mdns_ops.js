@@ -17,8 +17,7 @@ export const bridgesLookup = () => {
                 });
                 return resolve(hubs);
             }
-
-            return reject();
+            return reject(mDnsAnswers);
         })
     })
 }

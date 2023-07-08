@@ -30,6 +30,15 @@ export const mutations = {
 export const getters = {
     apiAppId: state => {
         return 'electron_hue_app#' + state.systemUsername + '@' + state.systemHostname
+    },
+    knownHubs: state => {
+        return state.knownHubs
+    },
+    preferences: state => {
+        return state.preferences
+    },
+    continuity: state => {
+        return state.continuity
     }
 }
 
@@ -59,6 +68,10 @@ export const initFromConfigStore = (store) => {
     // TODO add reading of the other pieces of settings / continuity to complete the Vuex store
 }
 
+// TODO: Add VuexAction to save the store to local store, basically what's written bellow, but as an action
 export const saveToConfigStore = () => {
     // TODO - save every bit of config to disk - knownHubs, preferences, continuity ...
+    window.system.config.writeConfig('knownHubs', getters.knownHubs());
+    window.system.config.writeConfig('preferences', getters.preferences());
+    window.system.config.writeConfig('continuity', getters.continuity());
 }

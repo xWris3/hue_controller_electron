@@ -88,6 +88,21 @@
             Configure
           </button>
         </article>
+
+        <button
+          @click="hubSetup()"
+          class="
+            w-11/12
+            bg-yellow-500
+            hover:bg-yellow-700
+            text-white
+            font-bold
+            py-2
+            rounded
+          "
+        >
+          Configure a hub
+        </button>
       </div>
     </div>
     <div v-else>
@@ -196,6 +211,18 @@ export default {
       const requestDeviceType = {
         devicetype: this.apiAppId,
       };
+
+      /**
+       * HubSetup ne doit pas avoir besoin de hubId et de HubIp. Il doit:
+       * - afficher le pop-up de connexion avec le loading qui tourne
+       * - envoyer une requête de connection à chaque hub inconnu
+       *    - envoyer à interval régulier des requêtes pour savoir si un hub accepte
+       * - dès qu'un hub accepte, on s'arrête, on stocke le token de connexion, et l'username qu'on a donné dans "knownHubs" (le hub passe de unknownHubs à knownHubs)
+       *    - sauvegarde dans le store Vuex et le local --> normalement, arrêter d'utiliser "knownHubs" comme une data et utiliser uniquement Vuex
+       *    - unknownHubs peut rester en local, rien a foutre dans le store Vuex
+       * - si l'utilisateur utilise le bouton d'annulation, on doit arrêter les requêtes
+       *
+       * */
 
       axios.post(`http://${hubIp}/api`, requestDeviceType).then((response) => {
         // Request contains error until the button of hub is pressed
